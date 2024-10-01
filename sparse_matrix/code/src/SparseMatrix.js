@@ -1,57 +1,63 @@
 const fs = require('fs');
 
+// Custom Error
+class MatrixFormatError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "MatrixFormatError";
+    }
+}
 
 class SparseMatrix {
     constructor(rows, cols) {
-        this.row = rows;
+        this.rows = rows;
         this.cols = cols;
-        this.elements = {};
-        // elements is dictionary to store non-zero elements
+        this.elements = {}; // Dictionary to store non-zero elements
     }
-    }
-    function fromFile(filePath) {
+
+    // Read matrix from file
+    static fromFile(filePath) {
         const data = fs.readFileSync(filePath, 'utf8').trim().split('\n');
-    
         if (!data[0].startsWith('rows=') || !data[1].startsWith('cols=')) {
-            throw ExceptionError("Input file has wromg format");
+            throw new MatrixFormatError("Input file has wrong format");
         }
-    
-        // extracting the rows and columns and convert them to integers
+
         const rows = parseInt(data[0].split('=')[1].trim());
         const cols = parseInt(data[1].split('=')[1].trim());
-        const matrix = new Sparse_matrix(rows, cols);
-    
+        const matrix = new SparseMatrix(rows, cols);
+
         for (let i = 2; i < data.length; i++) {
             const line = data[i].trim();
             if (line) {
                 const match = line.match(/\((\d+),\s*(\d+),\s*(-?\d+)\)/);
                 if (!match) {
-                    throw ExceptionError("Input file has wrong format")
+                    throw new MatrixFormatError("Input file has wrong format");
                 }
-    
+
                 const [_, row, col, value] = match.map(Number);
                 matrix.setElement(row, col, value);
             }
         }
-    
-        return matrix
-    }
-    // 
-    function getElement(rows, col) {
-        return this.elements['${row},${col}'] || 0;
+
+        return matrix;
     }
 
-    function setElement(rows, col, value) {
+    // Get element at (row, col)
+    getElement(row, col) {
+        return this.elements[`${row},${col}`] || 0;
+    }
+
+    // Set element at (row, col)
+    setElement(row, col, value) {
         if (value !== 0) {
-            this.elements['${row},${col}'] = value;
+            this.elements[`${row},${col}`] = value;
         } else {
-            delete this.elements['${row},${col}'];
-            // remove if zero to maintain the sparse matrix
+            delete this.elements[`${row},${col}`]; // Remove if zero to maintain sparsity
         }
     }
 
     // Matrix addition
-    function add(other) {
+    add(other) {
         if (this.rows !== other.rows || this.cols !== other.cols) {
             throw new Error('Matrix dimensions do not match for addition');
         }
@@ -75,7 +81,7 @@ class SparseMatrix {
     }
 
     // Matrix subtraction
-    function subtract(other) {
+    subtract(other) {
         if (this.rows !== other.rows || this.cols !== other.cols) {
             throw new Error('Matrix dimensions do not match for subtraction');
         }
@@ -98,7 +104,7 @@ class SparseMatrix {
     }
 
     // Matrix multiplication
-    function multiply(other) {
+    multiply(other) {
         if (this.cols !== other.rows) {
             throw new Error('Matrix dimensions do not match for multiplication');
         }
@@ -120,12 +126,13 @@ class SparseMatrix {
     }
 
     // To display sparse matrix (non-zero values)
-    function print() {
+    print() {
         console.log(`Sparse Matrix (${this.rows} x ${this.cols}):`);
         Object.keys(this.elements).forEach(key => {
             const [row, col] = key.split(',').map(Number);
             console.log(`(${row}, ${col}) -> ${this.elements[key]}`);
         });
     }
+}
 
 module.exports = SparseMatrix;
