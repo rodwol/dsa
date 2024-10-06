@@ -14,8 +14,8 @@ This project implements a Sparse Matrix in JavaScript, allowing efficient storag
 1. Clone this repository:
 
     \`\`\`
-    git clone https://github.com/yourusername/sparsematrix-project.git
-    cd sparsematrix-project
+    git clone https://github.com/rodwol/dsa.git
+    cd sparse_matrix
     \`\`\`
 
 ## Usage
