@@ -5,7 +5,6 @@ class SparseMatrix {
         this.rows = rows;
         this.cols = cols;
         this.elements = {}; // Dictionary to store non-zero elements
-        console.log('Matrix created with dimensions: ${rows}x${cols}')
     }
 
     // Static method to read a sparse matrix from a file
